@@ -35,18 +35,24 @@ public class ChangeUserDataTest extends AbstractTest{
         // создание pojo для изменения юзера
         CreateUserJson userWithNewCredentials = new CreateUserJson(email, password, newName);
 
-        // попытка изменить имя пользователя
-        PatchRequest.sendPatchRequest(userWithNewCredentials, endpointUser)
-                .then()
-                .statusCode(401)
-                .and()
-                .assertThat().body("success", Matchers.equalTo(false))
-                .and()
-                .assertThat().body("message", Matchers.equalTo("You should be authorised"));
+        // запрос на измениние имя пользователя
+        Response changeNameResponse = PatchRequest.sendPatchRequest(userWithNewCredentials, endpointUser);
 
         // удаление созданного юзера после теста
         deleteRequest.sendDeleteRequestWithToken(endpointUser, accessToken)
-                .then().statusCode(202);
+                .then()
+                .statusCode(202);
+
+        // проверка респонса
+        changeNameResponse
+                .then()
+                .statusCode(401)
+                .and()
+                .assertThat()
+                .body("success", Matchers.equalTo(false))
+                .and()
+                .assertThat()
+                .body("message", Matchers.equalTo("You should be authorised"));
     }
 
     @Test
@@ -71,19 +77,23 @@ public class ChangeUserDataTest extends AbstractTest{
         CreateUserJson userWithNewCredentials = new CreateUserJson(newEmail, password, name);
 
         // попытка изменить имя пользователя
-        PatchRequest.sendPatchRequest(userWithNewCredentials, endpointUser)
-                .then()
-                .statusCode(401)
-                .and()
-                .assertThat().body("success", Matchers.equalTo(false))
-                .and()
-                .assertThat().body("message", Matchers.equalTo("You should be authorised"));
-
+        Response changeNameResponse = PatchRequest.sendPatchRequest(userWithNewCredentials, endpointUser);
 
         // удаление созданного юзера после теста
         deleteRequest.sendDeleteRequestWithToken(endpointUser, accessToken)
-                .then().statusCode(202);
+                .then()
+                .statusCode(202);
 
+        // проверка респонса
+        changeNameResponse
+                .then()
+                .statusCode(401)
+                .and()
+                .assertThat()
+                .body("success", Matchers.equalTo(false))
+                .and()
+                .assertThat()
+                .body("message", Matchers.equalTo("You should be authorised"));
     }
 
     @Test
@@ -109,18 +119,22 @@ public class ChangeUserDataTest extends AbstractTest{
         CreateUserJson userWithNewCredentials = new CreateUserJson(email, newPassword, name);
 
         // попытка изменить имя пользователя
-        PatchRequest.sendPatchRequest(userWithNewCredentials, endpointUser)
-                .then()
-                .statusCode(401)
-                .and()
-                .assertThat().body("success", Matchers.equalTo(false))
-                .and()
-                .assertThat().body("message", Matchers.equalTo("You should be authorised"));
-
+        Response changeNameResponse = PatchRequest.sendPatchRequest(userWithNewCredentials, endpointUser);
 
         // удаление созданного юзера после теста
         deleteRequest.sendDeleteRequestWithToken(endpointUser, accessToken)
-                .then().statusCode(202);
+                .then()
+                .statusCode(202);
+
+        changeNameResponse
+                .then()
+                .statusCode(401)
+                .and()
+                .assertThat()
+                .body("success", Matchers.equalTo(false))
+                .and()
+                .assertThat()
+                .body("message", Matchers.equalTo("You should be authorised"));
 
     }
 
@@ -148,22 +162,25 @@ public class ChangeUserDataTest extends AbstractTest{
         // запрос на изменение данных пользователя
         Response changeUserResponse = patchRequest.sendPatchRequestWithAuthToken(userWithNewCredentials, endpointUser, accessToken);
 
+        // удаление созданного юзера после теста
+        deleteRequest.sendDeleteRequestWithToken(endpointUser, accessToken)
+                .then()
+                .statusCode(202);
+
         // проверка статус кода
         changeUserResponse
                 .then()
                 .statusCode(200)
                 .and()
-                .assertThat().body("success" , Matchers.equalTo(true));
+                .assertThat()
+                .body("success" , Matchers.equalTo(true));
+
 
         // проверка полей name и email
-        GetUserInfoJson getUserInfoJsonobject = changeUserResponse.body().as(GetUserInfoJson.class);
+        GetUserInfoJson getUserInfoJsonObject = changeUserResponse.body().as(GetUserInfoJson.class);
 
-        assertEquals("Поле email не совпадает", email.toLowerCase(), getUserInfoJsonobject.getUser().getEmail());
-        assertEquals("Поле name не совпадает", newName, getUserInfoJsonobject.getUser().getName());
-
-        // удаление созданного юзера после теста
-        deleteRequest.sendDeleteRequestWithToken(endpointUser, accessToken)
-                .then().statusCode(202);
+        assertEquals("Поле email не совпадает", email.toLowerCase(), getUserInfoJsonObject.getUser().getEmail());
+        assertEquals("Поле name не совпадает", newName, getUserInfoJsonObject.getUser().getName());
     }
 
     @Test
@@ -181,7 +198,8 @@ public class ChangeUserDataTest extends AbstractTest{
                 .then()
                 .statusCode(200)
                 .and()
-                .assertThat().body("success" , Matchers.equalTo(true));
+                .assertThat()
+                .body("success" , Matchers.equalTo(true));
 
         // сохранение токена
         String accessToken = getAccessToken(responseCreateUser);
@@ -191,6 +209,11 @@ public class ChangeUserDataTest extends AbstractTest{
 
         // запрос на изменение данных пользователя
         Response changeUserResponse = patchRequest.sendPatchRequestWithAuthToken(userWithNewCredentials, endpointUser, accessToken);
+
+        // удаление созданного юзера после теста
+        deleteRequest.sendDeleteRequestWithToken(endpointUser, accessToken)
+                .then()
+                .statusCode(202);
 
         // проверка статус кода
         changeUserResponse
@@ -202,10 +225,6 @@ public class ChangeUserDataTest extends AbstractTest{
 
         assertEquals("Поле email не совпадает", newEmail.toLowerCase(), getUserInfoJsonobject.getUser().getEmail());
         assertEquals("Поле name не совпадает", name, getUserInfoJsonobject.getUser().getName());
-
-        // удаление созданного юзера после теста
-        deleteRequest.sendDeleteRequestWithToken(endpointUser, accessToken)
-                .then().statusCode(202);
     }
 
     @Test
@@ -223,7 +242,8 @@ public class ChangeUserDataTest extends AbstractTest{
                 .then()
                 .statusCode(200)
                 .and()
-                .assertThat().body("success" , Matchers.equalTo(true));
+                .assertThat()
+                .body("success" , Matchers.equalTo(true));
 
         // сохранение токена
         String accessToken = getAccessToken(responseCreateUser);
@@ -236,7 +256,8 @@ public class ChangeUserDataTest extends AbstractTest{
                 .then()
                 .statusCode(200)
                 .and()
-                .assertThat().body("success", Matchers.equalTo(true));
+                .assertThat()
+                .body("success", Matchers.equalTo(true));
 
         // создание pojo для логина юзером с новым паролем
         UserLoginJson userLoginJsonObject = new UserLoginJson(email, newPassword);
@@ -249,14 +270,16 @@ public class ChangeUserDataTest extends AbstractTest{
                 .then()
                 .statusCode(200)
                 .and()
-                .assertThat().body("success", Matchers.equalTo(true));
+                .assertThat()
+                .body("success", Matchers.equalTo(true));
 
-        // сохраниение токена токена
+        // сохраниение токена
         String newAccessToken = getAccessToken(userLoginResponse);
 
         // удаление созданного юзера после теста
         deleteRequest.sendDeleteRequestWithToken(endpointUser, newAccessToken)
-                .then().statusCode(202);
+                .then()
+                .statusCode(202);
     }
 
     @Test
@@ -275,7 +298,8 @@ public class ChangeUserDataTest extends AbstractTest{
                 .then()
                 .statusCode(200)
                 .and()
-                .assertThat().body("success" , Matchers.equalTo(true));
+                .assertThat()
+                .body("success" , Matchers.equalTo(true));
 
         // сохранение первого токена
         String firstAccessToken = getAccessToken(responseCreateFirstUser);
@@ -288,7 +312,8 @@ public class ChangeUserDataTest extends AbstractTest{
                 .then()
                 .statusCode(200)
                 .and()
-                .assertThat().body("success" , Matchers.equalTo(true));
+                .assertThat()
+                .body("success" , Matchers.equalTo(true));
 
         // сохранение второго токена
         String secondAccessToken = getAccessToken(responseCreateSecondUser);
@@ -297,21 +322,28 @@ public class ChangeUserDataTest extends AbstractTest{
         CreateUserJson userWithNewCredentials = new CreateUserJson(newEmail, password, name);
 
         // запрос на изменение данных пользователя
-        patchRequest.sendPatchRequestWithAuthToken(userWithNewCredentials, endpointUser, firstAccessToken)
-                .then()
-                .statusCode(403)
-                .and()
-                .assertThat().body("success", Matchers.equalTo(false))
-                .and()
-                .assertThat().body("message", Matchers.equalTo("User with such email already exists"));
+        Response changeUserResponse = patchRequest.sendPatchRequestWithAuthToken(userWithNewCredentials, endpointUser, firstAccessToken);
 
         // удаление первого созданного юзера после теста
         deleteRequest.sendDeleteRequestWithToken(endpointUser, firstAccessToken)
-                .then().statusCode(202);
+                .then()
+                .statusCode(202);
 
         // удаление второго созданного юзера после теста
         deleteRequest.sendDeleteRequestWithToken(endpointUser, secondAccessToken)
-                .then().statusCode(202);
+                .then()
+                .statusCode(202);
+
+        changeUserResponse
+                .then()
+                .statusCode(403)
+                .and()
+                .assertThat()
+                .body("success", Matchers.equalTo(false))
+                .and()
+                .assertThat()
+                .body("message", Matchers.equalTo("User with such email already exists"));
+
     }
 
 }

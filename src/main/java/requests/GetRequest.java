@@ -1,5 +1,6 @@
 package requests;
 
+import io.qameta.allure.Step;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 
@@ -11,6 +12,7 @@ public class GetRequest extends AbstractRequest {
         RestAssured.baseURI = baseURI;
     }
 
+    @Step("Отправка Get запроса")
     public Response sendGetRequest (String endpoint) {
         Response response = given()
                 .when()
@@ -19,6 +21,7 @@ public class GetRequest extends AbstractRequest {
         return response;
     }
 
+    @Step("Отправка Get запроса c access токеном")
     public Response sendGetRequestWithToken (String endpoint, String token) {
         Response response = given()
                 .auth()

@@ -24,9 +24,11 @@ public class CreateOrderTest extends AbstractTest {
                 .then()
                 .statusCode(200)
                 .and()
-                .assertThat().body("success", Matchers.equalTo(true))
+                .assertThat()
+                .body("success", Matchers.equalTo(true))
                 .and()
-                .assertThat().body("name", Matchers.equalTo("Spicy метеоритный флюоресцентный бургер"));
+                .assertThat()
+                .body("name", Matchers.equalTo("Spicy метеоритный флюоресцентный бургер"));
     }
 
     @Test
@@ -47,16 +49,23 @@ public class CreateOrderTest extends AbstractTest {
         // сохраниение токена
         String accessToken = getAccessToken(createUserResponse);
 
-        Response createOrderResponse = createOrderAthorized(Arrays.asList(craterBun, spikesSause, marsCrystals), accessToken);
+        Response createOrderResponse = createOrderAuthorized(Arrays.asList(craterBun, spikesSause, marsCrystals), accessToken);
+
+        // удаление созданного юзера после теста
+        deleteRequest.sendDeleteRequestWithToken(endpointUser, accessToken)
+                .then()
+                .statusCode(202);
 
         // проверка статуса
         createOrderResponse
                 .then()
                 .statusCode(200)
                 .and()
-                .assertThat().body("success", Matchers.equalTo(true))
+                .assertThat()
+                .body("success", Matchers.equalTo(true))
                 .and()
-                .assertThat().body("name", Matchers.equalTo("Альфа-сахаридный антарианский краторный бургер"));
+                .assertThat()
+                .body("name", Matchers.equalTo("Альфа-сахаридный антарианский краторный бургер"));
 
         // десериализация
         CreateOrderResponseJson createOrderResponseJsonObject = createOrderResponse.body().as(CreateOrderResponseJson.class);
@@ -72,10 +81,6 @@ public class CreateOrderTest extends AbstractTest {
         assertEquals("Первый ингредиент не совпадает", craterBun, ingredients.get(0).get_id());
         assertEquals("Второй ингредиент не совпадает", spikesSause, ingredients.get(1).get_id());
         assertEquals("Третий ингредиент не совпадает", marsCrystals, ingredients.get(2).get_id());
-
-        // удаление созданного юзера после теста
-        deleteRequest.sendDeleteRequestWithToken(endpointUser, accessToken)
-                .then().statusCode(202);
     }
 
     @Test
@@ -89,9 +94,11 @@ public class CreateOrderTest extends AbstractTest {
                 .then()
                 .statusCode(400)
                 .and()
-                .assertThat().body("success", Matchers.equalTo(false))
+                .assertThat()
+                .body("success", Matchers.equalTo(false))
                 .and()
-                .assertThat().body("message", Matchers.equalTo("Ingredient ids must be provided"));
+                .assertThat()
+                .body("message", Matchers.equalTo("Ingredient ids must be provided"));
     }
 
     @Test
@@ -105,13 +112,10 @@ public class CreateOrderTest extends AbstractTest {
                 .then()
                 .statusCode(400)
                 .and()
-                .assertThat().body("success", Matchers.equalTo(false))
+                .assertThat()
+                .body("success", Matchers.equalTo(false))
                 .and()
-                .assertThat().body("message", Matchers.equalTo("One or more ids provided are incorrect"));
+                .assertThat()
+                .body("message", Matchers.equalTo("One or more ids provided are incorrect"));
     }
-
-
-
-
-
 }

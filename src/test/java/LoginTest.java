@@ -29,15 +29,17 @@ public class LoginTest extends AbstractTest {
         // запрос на логин
         Response responseLogin = postRequest.sendPostRequest(userLoginJson, endpointLogin);
 
+        // удаление
+        deleteRequest.sendDeleteRequestWithToken(endpointUser, getAccessToken(responseLogin))
+                .then()
+                .statusCode(202);
+
         responseLogin
                 .then()
                 .statusCode(200)
                 .and()
-                .assertThat().body("success", Matchers.equalTo(true));
-
-        // удаление
-        deleteRequest.sendDeleteRequestWithToken(endpointUser, getAccessToken(responseLogin))
-                .then().statusCode(202);
+                .assertThat()
+                .body("success", Matchers.equalTo(true));
     }
 
     @Test
@@ -64,10 +66,11 @@ public class LoginTest extends AbstractTest {
                 .then()
                 .statusCode(401)
                 .and()
-                .assertThat().body("success", Matchers.equalTo(false))
+                .assertThat()
+                .body("success", Matchers.equalTo(false))
                 .and()
-                .assertThat().body("message", Matchers.equalTo("email or password are incorrect"));
-
+                .assertThat()
+                .body("message", Matchers.equalTo("email or password are incorrect"));
     }
 
     @Test
@@ -94,8 +97,10 @@ public class LoginTest extends AbstractTest {
                 .then()
                 .statusCode(401)
                 .and()
-                .assertThat().body("success", Matchers.equalTo(false))
+                .assertThat()
+                .body("success", Matchers.equalTo(false))
                 .and()
-                .assertThat().body("message", Matchers.equalTo("email or password are incorrect"));
+                .assertThat()
+                .body("message", Matchers.equalTo("email or password are incorrect"));
     }
 }

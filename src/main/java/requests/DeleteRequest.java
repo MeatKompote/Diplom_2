@@ -1,5 +1,6 @@
 package requests;
 
+import io.qameta.allure.Step;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import pojo.AbstractPojo;
@@ -12,6 +13,7 @@ public class DeleteRequest extends AbstractRequest {
         RestAssured.baseURI = baseURI;
     }
 
+    @Step("Отправка Delete запроса с access токеном")
     public Response sendDeleteRequestWithToken (String endpoint, String token) {
         Response response = given()
                 .auth()

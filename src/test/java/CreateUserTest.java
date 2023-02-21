@@ -16,17 +16,19 @@ public class CreateUserTest extends AbstractTest {
         // создание юзера
         Response responseCreateUser = createUser(name, email, password);
 
+        // удаление созданного юзера после теста
+        String accessToken = getAccessToken(responseCreateUser);
+        deleteRequest.sendDeleteRequestWithToken(endpointUser, accessToken)
+                .then()
+                .statusCode(202);
+
         // проверка респонс кода
         responseCreateUser
                 .then()
                 .statusCode(200)
                 .and()
-                .assertThat().body("success", Matchers.equalTo(true));
-
-        // удаление созданного юзера после теста
-        String accessToken = getAccessToken(responseCreateUser);
-        deleteRequest.sendDeleteRequestWithToken(endpointUser, accessToken)
-                .then().statusCode(202);
+                .assertThat()
+                .body("success", Matchers.equalTo(true));
     }
 
     @Test
@@ -45,17 +47,20 @@ public class CreateUserTest extends AbstractTest {
         // повторный запрос на создание того же юзера
         Response responseCreateDuplicateUser = createUser(name, email, password);
 
+        // удаление созданного юзера после теста
+        deleteRequest.sendDeleteRequestWithToken(endpointUser, accessToken)
+                .then()
+                .statusCode(202);
+
         responseCreateDuplicateUser
                 .then()
                 .statusCode(403)
                 .and()
-                .assertThat().body("success", Matchers.equalTo(false))
+                .assertThat()
+                .body("success", Matchers.equalTo(false))
                 .and()
-                .assertThat().body("message", Matchers.equalTo("User already exists"));
-
-        // удаление созданного юзера после теста
-        deleteRequest.sendDeleteRequestWithToken(endpointUser, accessToken)
-                .then().statusCode(202);
+                .assertThat()
+                .body("message", Matchers.equalTo("User already exists"));
     }
 
     @Test
@@ -72,9 +77,11 @@ public class CreateUserTest extends AbstractTest {
                 .then()
                 .statusCode(403)
                 .and()
-                .assertThat().body("success", Matchers.equalTo(false))
+                .assertThat()
+                .body("success", Matchers.equalTo(false))
                 .and()
-                .assertThat().body("message", Matchers.equalTo("Email, password and name are required fields"));
+                .assertThat()
+                .body("message", Matchers.equalTo("Email, password and name are required fields"));
 
     }
 
@@ -92,9 +99,11 @@ public class CreateUserTest extends AbstractTest {
                 .then()
                 .statusCode(403)
                 .and()
-                .assertThat().body("success", Matchers.equalTo(false))
+                .assertThat()
+                .body("success", Matchers.equalTo(false))
                 .and()
-                .assertThat().body("message", Matchers.equalTo("Email, password and name are required fields"));
+                .assertThat()
+                .body("message", Matchers.equalTo("Email, password and name are required fields"));
     }
 
     @Test
@@ -111,8 +120,10 @@ public class CreateUserTest extends AbstractTest {
                 .then()
                 .statusCode(403)
                 .and()
-                .assertThat().body("success", Matchers.equalTo(false))
+                .assertThat()
+                .body("success", Matchers.equalTo(false))
                 .and()
-                .assertThat().body("message", Matchers.equalTo("Email, password and name are required fields"));
+                .assertThat()
+                .body("message", Matchers.equalTo("Email, password and name are required fields"));
     }
 }

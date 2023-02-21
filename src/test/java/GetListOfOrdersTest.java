@@ -21,9 +21,11 @@ public class GetListOfOrdersTest extends AbstractTest {
                 .then()
                 .statusCode(401)
                 .and()
-                .assertThat().body("success", Matchers.equalTo(false))
+                .assertThat()
+                .body("success", Matchers.equalTo(false))
                 .and()
-                .assertThat().body("message", Matchers.equalTo("You should be authorised"));
+                .assertThat()
+                .body("message", Matchers.equalTo("You should be authorised"));
     }
 
     @Test
@@ -37,7 +39,9 @@ public class GetListOfOrdersTest extends AbstractTest {
         Response responseCreateUser = createUser(name, email, password);
 
         // проверка ствтус кода
-        responseCreateUser.then().statusCode(200);
+        responseCreateUser
+                .then()
+                .statusCode(200);
 
         // сохранение токена
         String accessToken = getAccessToken(responseCreateUser);
@@ -46,21 +50,23 @@ public class GetListOfOrdersTest extends AbstractTest {
         List<String> order1 = Arrays.asList(bunR2D3, spicyXSause, beefMeteor);
         List<String> order2 = Arrays.asList(craterBun, galacticSause, mineralRings);
 
-        Response responseCreateOrder1 = createOrderAthorized(order1, accessToken);
+        Response responseCreateOrder1 = createOrderAuthorized(order1, accessToken);
 
         responseCreateOrder1
                 .then()
                 .statusCode(200)
                 .and()
-                .assertThat().body("success", Matchers.equalTo(true));
+                .assertThat()
+                .body("success", Matchers.equalTo(true));
 
-        Response responseCreateOrder2 = createOrderAthorized(order2, accessToken);
+        Response responseCreateOrder2 = createOrderAuthorized(order2, accessToken);
 
         responseCreateOrder2
                 .then()
                 .statusCode(200)
                 .and()
-                .assertThat().body("success", Matchers.equalTo(true));
+                .assertThat()
+                .body("success", Matchers.equalTo(true));
 
         // десериализация
         CreateOrderResponseJson createOrder1ResponseJsonObject = responseCreateOrder1.body().as(CreateOrderResponseJson.class);
@@ -73,12 +79,18 @@ public class GetListOfOrdersTest extends AbstractTest {
         // запрос на получение заказов для юзера
         Response responseGetOrdersForUser = getRequest.sendGetRequestWithToken(endpointOrder, accessToken);
 
+        // удаление юзера
+        deleteRequest.sendDeleteRequestWithToken(endpointUser, accessToken)
+                .then()
+                .statusCode(202);
+
         // проверка ствтус кода
         responseGetOrdersForUser
                 .then()
                 .statusCode(200)
                 .and()
-                .assertThat().body("success", Matchers.equalTo(true));
+                .assertThat()
+                .body("success", Matchers.equalTo(true));
 
         // десериализация
         ListOfOrdersForUserJson listOfOrdersForUserJson = responseGetOrdersForUser.body().as(ListOfOrdersForUserJson.class);
@@ -90,10 +102,6 @@ public class GetListOfOrdersTest extends AbstractTest {
         assertEquals("Количестово заказов не совпадает с ожидаемым", 2, listOfOrders.size());
         assertEquals("id первого заказа не совпадает", orderId1, listOfOrders.get(0).get_id());
         assertEquals("id второго заказа не совпадает", orderId2, listOfOrders.get(1).get_id());
-
-        // удаление юзера
-        deleteRequest.sendDeleteRequestWithToken(endpointUser, accessToken)
-                .then().statusCode(202);
     }
 
 }

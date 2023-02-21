@@ -1,3 +1,4 @@
+import io.qameta.allure.Step;
 import io.restassured.response.Response;
 import org.apache.commons.lang3.RandomStringUtils;
 import pojo.CreateOrderJson;
@@ -53,6 +54,7 @@ public abstract class AbstractTest {
         return RandomStringUtils.randomAlphanumeric(count);
     }
 
+    @Step("Сохранение access токена")
     public String getAccessToken(Response response) {
         CreateUserResponseJson createUserResponseJson = response
                 .body()
@@ -61,6 +63,7 @@ public abstract class AbstractTest {
         return token.substring(7);
     }
 
+    @Step("Запрос на создание пользователя")
     public Response createUser(String name, String email, String password) {
         // создание pojo для создания юзера с коректными данными
         CreateUserJson correctUserJson = new CreateUserJson(email, password, name);
@@ -69,6 +72,7 @@ public abstract class AbstractTest {
         return postRequest.sendPostRequest(correctUserJson, endpointCreateUser);
     }
 
+    @Step("Создание заказа, когода пользоватедь неавторизован")
     public Response createOrderUnathorized(List<String> ingredients) {
         // json для создания заказа
         CreateOrderJson createOrderJsonObject = new CreateOrderJson(ingredients);
@@ -76,7 +80,8 @@ public abstract class AbstractTest {
         return postRequest.sendPostRequest(createOrderJsonObject, endpointOrder);
     }
 
-    public Response createOrderAthorized(List<String> ingredients, String accessToken) {
+    @Step("Создание заказа, когода пользователь авторизован")
+    public Response createOrderAuthorized(List<String> ingredients, String accessToken) {
         // json для создания заказа
         CreateOrderJson createOrderJsonObject = new CreateOrderJson(ingredients);
 

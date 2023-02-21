@@ -1,5 +1,6 @@
 package requests;
 
+import io.qameta.allure.Step;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import pojo.AbstractPojo;
@@ -12,6 +13,7 @@ public class PostRequest extends AbstractRequest {
         RestAssured.baseURI = baseURI;
     }
 
+    @Step("Отправка Post запроса")
     public Response sendPostRequest (AbstractPojo json, String endpoint) {
         Response response = given()
                 .header("Content-type", "application/json")
@@ -23,6 +25,7 @@ public class PostRequest extends AbstractRequest {
         return response;
     }
 
+    @Step("Отправка Post запроса с access токеном")
     public Response sendPostRequestWithAuthToken (AbstractPojo json, String endpoint, String token) {
         Response response = given()
                 .auth()
